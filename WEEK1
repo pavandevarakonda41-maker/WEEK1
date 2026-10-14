@@ -1,0 +1,108 @@
+CREATE DATABASE studentdb;
+
+USE studentdb;
+
+CREATE TABLE student (
+    rollno INT PRIMARY KEY,
+    name VARCHAR(50),
+    address VARCHAR(100)
+);
+Step 2: JDBC Program
+import java.sql.*;
+public class StudentCRUD {
+    public static void main(String[] args) {
+
+        // JDBC Driver and Database URL
+        String driver = "com.mysql.cj.jdbc.Driver";
+        String url = "jdbc:mysql://localhost:3306/studentdb";
+
+        // Database Username and Password
+        String username = "root";
+        String password = "root";
+
+        try {
+
+            // Load JDBC Driver
+            Class.forName(driver);
+
+            // Establish Connection
+            Connection con = DriverManager.getConnection(url, username, password);
+
+            // Create Statement Object
+            Statement st = con.createStatement();
+
+            // ---------------------------------------------------
+            // a. Insert Initial Records
+            // ---------------------------------------------------
+
+            st.executeUpdate("INSERT INTO student VALUES(101,'Rahul','Hyderabad')");
+            st.executeUpdate("INSERT INTO student VALUES(102,'Kiran','Chennai')");
+            st.executeUpdate("INSERT INTO student VALUES(103,'Aman','Delhi')");
+
+            System.out.println("Initial Records Inserted Successfully");
+
+            // ---------------------------------------------------
+            // b. Display Records
+            // ---------------------------------------------------
+
+            System.out.println("\nRecords Before Operations:");
+
+            ResultSet rs = st.executeQuery("SELECT * FROM student");
+
+            while(rs.next()) {
+                System.out.println(
+                        rs.getInt("rollno") + " "
+                        + rs.getString("name") + " "
+                        + rs.getString("address"));
+            }
+
+            // ---------------------------------------------------
+            // c. Insert Two More Records
+            // ---------------------------------------------------
+
+            st.executeUpdate("INSERT INTO student VALUES(104,'Ravi','Mumbai')");
+            st.executeUpdate("INSERT INTO student VALUES(105,'Sita','Pune')");
+
+            System.out.println("\nTwo Records Inserted");
+
+            // ---------------------------------------------------
+            // d. Update One Record
+            // ---------------------------------------------------
+
+            st.executeUpdate(
+                    "UPDATE student SET address='Bangalore' WHERE rollno=102");
+
+            System.out.println("One Record Updated");
+
+            // ---------------------------------------------------
+            // e. Delete One Record
+            // ---------------------------------------------------
+
+            st.executeUpdate(
+                    "DELETE FROM student WHERE rollno=103");
+
+            System.out.println("One Record Deleted");
+
+            // ---------------------------------------------------
+            // f. Display Final Records
+            // ---------------------------------------------------
+
+            System.out.println("\nFinal Records After Operations:");
+
+            rs = st.executeQuery("SELECT * FROM student");
+
+            while(rs.next()) {
+                System.out.println(
+                        rs.getInt("rollno") + " "
+                        + rs.getString("name") + " "
+                        + rs.getString("address"));
+            }
+
+            // Close Connection
+            con.close();
+
+        } catch(Exception e) {
+            System.out.println(e);
+        }
+    }
+}
